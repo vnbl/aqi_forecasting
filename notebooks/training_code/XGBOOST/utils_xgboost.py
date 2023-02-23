@@ -14,7 +14,7 @@ def get_everything(datos, estacion, train_months, variables, dependent, train_te
 
     last_train_set_date = df_estacion.FECHAHORA.min() + train_months
 
-    df_train = df_estacion[df_estacion['FECHAHORA'] <= last_train_set_date ].copy()
+    df_train = df_estacion[df_estacion['FECHAHORA'] <= last_train_set_date].copy()
 
     df_test = df_estacion[df_estacion['FECHAHORA'] > last_train_set_date].copy()
 

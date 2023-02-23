@@ -112,4 +112,62 @@ def get_everything(datos, estacion, train_months, variables, dependent, train_te
 
     return X_train, y_train, X_test, y_test
     
+
+def get_validation(datos, estacion, variables, dependent, train_test_samples, input_samples, output_samples, number_of_features,
+                  step):
     
+    # Primero elegimos la estacion que queremos usar 
+
+    df_estacion = datos[datos['ESTACION'] == estacion]
+
+    df_train = df_estacion.reset_index(drop = True)
+
+
+    # Elegimos las variables que van a estar en cada set
+
+    df_train = df_train[variables]
+    # Dividimos el df_train en batches de entrenamiento
+    
+    start = 0
+    end = len(df_train)
+    next_ = 0
+
+    X_train_batches_df = []
+    y_train_batches_df = []
+
+    while (start + train_test_samples) <= end:
+        next_ = start + input_samples
+        X_train_batches_df.append(df_train.loc[start:next_ - 1, :]) # 20
+        y_train_batches_df.append(df_train.loc[next_: next_+output_samples -1, dependent])
+        start = start + step
+
+    X_train_batches = np.asarray(X_train_batches_df)
+    X_train_batches = X_train_batches.reshape(-1, input_samples, number_of_features)
+
+    y_train_batches = np.asarray(y_train_batches_df)
+    y_train_batches = y_train_batches.reshape(-1, output_samples, 1)
+    
+    
+    X_train = []
+
+    for i in range(0, len(X_train_batches)):
+
+        hold = []
+
+        for j in range(0, len(X_train_batches[i])):
+
+            if j==(len(X_train_batches[i]) - 1):
+                hold = np.concatenate((hold, X_train_batches[i][j][:]), axis = None)
+
+            else:
+                hold = np.concatenate((hold, X_train_batches[i][j][-1]), axis = None)
+
+        X_train.append(hold)
+
+
+    X_validation = np.nan_to_num(np.reshape(X_train, (len(X_train), len(X_train[0]))))
+
+    y_validation = np.nan_to_num(np.reshape(y_train_batches, (len(y_train_batches), output_samples)))
+
+
+    return X_validation, y_validation
