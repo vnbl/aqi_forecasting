@@ -82,6 +82,7 @@ target/
 /notebooks/models/
 /notebooks/optuna_studies/
 /notebooks/datos/
+/notebooks/final_models/
 
 # Mac OS-specific storage files
 .DS_Store
